@@ -1,10 +1,8 @@
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
-JAMMMING 
+# JAMMMING
 
-CHALLENGE
-
-FEATURES
+## CHALLENGE
 
 Below is a list of the DESIRED website's features:
 
@@ -25,10 +23,10 @@ Save Playlist to Account — users can save their custom playlist by clicking a 
 
 FIRTS SUBMIT, don't have many of DESIRED website's features:
 
-Folder Structure
+## Folder Structure
 
 
-
+```bash
 my-app/
   .gitignore
   package.json
@@ -72,7 +70,7 @@ my-app/
       util/
         Spotify.js
         track.item.json
-
+```
     
 For the project to build, these files must exist with exact filenames:
 
