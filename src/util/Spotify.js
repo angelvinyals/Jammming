@@ -1,10 +1,8 @@
 const clientID='ef4013b061ed49d6b107a170fbe84e5c';
 const redirectURI='http://localhost:3000/callback'
-
-
-let state='';
 let accessToken='';
-let expires_in='';
+let state=''
+
 
 
 /**
@@ -29,6 +27,7 @@ const generateRandomString = (length) => {
  * @return String|Object If prop is provided a string value is returned, otherwise an object of alproperties is returned
  */
 const getUrlParams =( prop )=> {
+	console.log(`Entering getUrlParams`)
     var params = {};    
     //var urex='https://example.com/callback#access_token=NwAExz...BV3O2Tk&token_type=Bearer&expires_in=3600&state=123'
     //console.log('urex',urex);
@@ -41,7 +40,7 @@ const getUrlParams =( prop )=> {
         var parts = val.split( '=', 2 );
         params[ parts[ 0 ] ] = parts[ 1 ];
     } );
-
+    console.log (`getUrlParams ... prop= ${prop}`)
     return ( prop && prop in params ) ? params[ prop ] : params;
     /*
 	for this urex= 'https://example.com/callback#access_token=NwAExz...BV3O2Tk&token_type=Bearer&expires_in=3600&state=123'
@@ -56,123 +55,80 @@ const getUrlParams =( prop )=> {
 
 
 
-export let Spotify={
-	
-	async getAccessToken(){
-	    try {
-	    	if (accessToken){
-				console.log('YES.Thre is accesToken----------------');
-				return accessToken;
-			}
-			console.log('NO accesToken////////////////');
-			state=generateRandomString(8);
-			console.log('New state= ',state)
-	      	const accessTokenResponse = await fetch('https://cors-anywhere.herokuapp.com/https://accounts.spotify.com/authorize?client_id='+ clientID +'&redirect_uri=' + redirectURI +'&scope=user-read-private%20user-read-email&response_type=token&state='+ state,{method:'GET'})
-	      	console.log(' AccesToken response : ', accessTokenResponse)   
-	      	if(accessTokenResponse.ok){
-	      		console.log('accesTokenResponse= ok')
-	      		let urlRes = getUrlParams();
-				console.log('urlRes',urlRes);
-				accessToken= urlRes.access_token;
-				console.log('accessToken: ',accessToken);
-				expires_in = urlRes.expires_in;
-				console.log('expires_in: ',expires_in);
-				return accessTokenResponse
-	      	}  
-	    } catch (error) {
-	      console.log(error)
-	    } 
-	},
-
-
-
-	/*
+export const Spotify={
+		
 	getAccessToken(){
-		console.log('accessToken',accessToken);
+		console.log(`Entering SPOTIFY.JS getAccessToken `)
 		if (accessToken){
-			console.log('SI hi ha accesToken----------------');
+			console.log(`YES, there is accesToken : ${accessToken}`);
 			return accessToken;
 		}
-		console.log('NO hi ha accesToken');
+		console.log('there is NOT accesToken');
 		state=generateRandomString(8);
-		console.log('nou state= ',state)
+		console.log('generate state= ',state)
+		const accessUrl = `https://cors-anywhere.herokuapp.com/https://accounts.spotify.com/authorize?client_id=${clientID}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirectURI}`;
+      	console.log(`accessUrl to get token= ${accessUrl}`)
+      	fetch(accessUrl)
+      	.then(response => {
+      		let urlRes = getUrlParams();
+			console.log('urlRes',urlRes);
+			accessToken=urlRes.access_token
+			console.log (`accessToken : ${accessToken}`)
+			const expiresIn = Number(urlRes.expires_in);								
+			console.log (`expiresIn : ${expiresIn}`)
+			window.setTimeout(() => accessToken = '', expiresIn * 2000);
+      		window.history.pushState('Access Token', null, '/'); // This clears the parameters, allowing us to grab a new access token when it expires.
+      		return accessToken;
+      	})
+      	
+		/*
 		return fetch('https://cors-anywhere.herokuapp.com/https://accounts.spotify.com/authorize?client_id='+ clientID +'&redirect_uri=' + redirectURI +'&scope=user-read-private%20user-read-email&response_type=token&state='+ state,{method:'GET'})
 			.then(response =>{
 				console.log('response',response);
 				let urlRes = getUrlParams();
 				console.log('urlRes',urlRes);
 				accessToken= urlRes.access_token;
-				expires_in = urlRes.expires_in;
+				let expires_in = urlRes.expires_in;
 				window.location.assign('https://accounts.spotify.com/authorize?client_id='+ clientID +'&response_type=token&scope=playlist-modify-public&redirect_uri=' + redirectURI)
 			})	
-			
+		*/	
 	},
 	
-*/
-	async search(term){
-	    try {
-	    	console.log('SEARCH ...begin');
-	    	let response =await Spotify.getAccessToken();
-	    	console.log('SEARCH token response', response);
-	    	if (response.ok){
-				console.log('YES.Thre is accesToken----------------');
-				console.log('accessToken: ', accessToken);
-				console.log('Searching term: ', term);
-				let SearchResponse= await fetch('https://api.spotify.com/v1/search?&q=' + term + '&type=track&limit=10',{
-					method: 'GET',
-					headers: {Authorization: `Bearer ${accessToken}`}})				
-				if (SearchResponse){
-					console.log('SearchResponse: ',SearchResponse)
-					
 
-
-				}
-				throw new Error ('Request TERM SEARCH failed¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡');
-
-
-			}
-			throw new Error ('Request token failed¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡¡');
-	    } catch (error) {
-	      console.log('async try error',error)
-	    } 
-	}
-
-/*
 	search(term){
-		console.log('SEARCH ...begin')
-		return Spotify.getAccessToken().then(() =>{
-			console.log('tenim  acces');
-			//console.log('accessToken', accessToken);
-			//console.log('expires_in', expires_in);
-			console.log('term que busquem.....', term);
-			return fetch('https://api.spotify.com/v1/search?&q=' + term + '&type=track&limit=10',{
-				method: 'GET',
-				headers: {Authorization: `Bearer ${accessToken}`}
-			}).then(response => {								
-				console.log('resposta de la  busqueda: ');
-				return response.json();
-			}).then(jsonresponse =>{
-				if (jsonresponse.tracks.items.length >0){
-					//console.log('jsonresponse.tracks.items', jsonresponse.tracks.items);
-					jsonresponse.tracks.items.map( item=>(  
-							{
-								name: item.name,
-								id: item.id,
-								artists: item.artists[0].name,
-								album: item.album.name,
-								uri: item.uri
-							}
-						));
-					
-				} else{
-					console.log('no hi ha tracks.....');
-					return {}
-				}				
-			});			
-		});		
+		console.log('Entering SPOTIFY.JS search')
+		return Spotify.getAccessToken()
+		console.log('accessToken', accessToken);
+		//console.log('expires_in', expires_in);
+		console.log('term que busquem.....', term);
+		return fetch('https://api.spotify.com/v1/search?&q=' + term + '&type=track&limit=10',{
+			method: 'GET',
+			headers: {Authorization: `Bearer ${accessToken}`}
+		}).then(response => {								
+			console.log('resposta de la  busqueda: ');
+			return response.json();
+		}).then(jsonresponse =>{
+			if (jsonresponse.tracks.items.length >0){
+				//console.log('jsonresponse.tracks.items', jsonresponse.tracks.items);
+				jsonresponse.tracks.items.map( item=>(  
+						{
+							name: item.name,
+							id: item.id,
+							artists: item.artists[0].name,
+							album: item.album.name,
+							uri: item.uri
+						}
+					));
+				
+			} else{
+				console.log('no hi ha tracks.....');
+				return {}
+			}				
+		});			
+			
 	}
 
-*/
+
 };
 
 //module.exports = Spotify

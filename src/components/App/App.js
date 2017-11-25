@@ -41,6 +41,7 @@ class App extends Component {
 		let isTrk = false;
 		this.state.playlistTracks.map(trk =>{
 			if(trk.id === track.id) {return isTrk=true}
+			return ''	
 		})
 		if (!isTrk){
 			return this.setState({ playlistTracks: [...this.state.playlistTracks, track]})	
@@ -52,6 +53,7 @@ class App extends Component {
 		// Filter all todos except the one to be removed
 		const remainder = this.state.playlistTracks.filter((trk) => {
 	      if(trk.id !== track.id) return trk;
+	      return ''
 	    });
 	    // Update state with filter
 	    this.setState({playlistTracks: remainder});
@@ -65,25 +67,24 @@ class App extends Component {
 	
 	savePlaylist(){
 		let trackURIs=[];
-		this.playlistTracks.map((trk) => {trackURIs.push(trk.uri)})
+		this.playlistTracks.map((trk) => {trackURIs.push(trk.uri); return ''})
+		return ''
 	}
 	
-	/*
-	search = async(term) => {
-	    try {
-	      const res = await Spotify.search(term)
+	
+	search = (term) => {
+		console.log(`entering search on APPS.... whith ${term}`)
+	    const res = Spotify.search(term)
 	      
 	      this.setState({ res })
-	    } catch (error) {
-	      console.log(error)
-	    } 
+	    	    
 	}
-	*/
+
 	
-	async search(term){
+	search(term){
 		console.log('APP search begin..................term:,',term)
 		try{
-			let resp= await Spotify.search(term)
+			let resp= Spotify.search(term)
 			if(resp){
 				console.log('APP SEARCH response: ');
 			}
