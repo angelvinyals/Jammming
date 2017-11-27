@@ -4,8 +4,12 @@ import Track from '../Track/Track'
 
 class TrackList extends Component {
   render() {
+  	if (!this.props.tracks) {
+      console.log('this.props.tracks',this.props.tracks)
+      return (<div>searching....</div>)
+    }
     return (
-      	<div className="TrackList">
+    	<div className="TrackList">
 		    {/*<!-- You will add a map method that renders 
 		    a set of Track components  -->*/}
 		    <ul>
@@ -23,6 +27,9 @@ class TrackList extends Component {
 		    )}
 		    </ul>
 		</div>
+
+    	
+      	
     );
   }
 }

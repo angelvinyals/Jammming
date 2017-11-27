@@ -18,10 +18,10 @@ class SearchBar extends Component {
 	}
 
 	handleTermChange(e){
+		e.preventDefault()
 		console.log('handleTermChange event',e.target.value);
 		this.setState({search: e.target.value})
 	}
-
 
   	render() {
     	return (

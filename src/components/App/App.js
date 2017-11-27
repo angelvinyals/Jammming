@@ -24,6 +24,7 @@ class App extends Component {
 	    			name:'nom2',
 	    			artist:'2artista',
 	    			album:'2album'
+
 	    		}
 	    	]
 	    };
@@ -31,7 +32,7 @@ class App extends Component {
 	    this.removeTrack=this.removeTrack.bind(this)
 	    this.updatePlayListName=this.updatePlayListName.bind(this)
 	    this.savePlaylist=this.savePlaylist.bind(this)
-	    this.search=this.search.bind(this)
+	    this.handleSearch=this.handleSearch.bind(this)
 	}
 
 	addTrack(track){
@@ -70,23 +71,16 @@ class App extends Component {
 		this.playlistTracks.map((trk) => {trackURIs.push(trk.uri); return ''})
 		return ''
 	}
-	
-	
-	search = (term) => {
-		console.log(`entering search on APPS.... whith ${term}`)
-	    const res = Spotify.search(term)
-	      
-	      this.setState({ res })
-	    	    
-	}
-
-	
-	search(term){
+		
+	async handleSearch(term){
 		console.log('APP search begin..................term:,',term)
+
 		try{
-			let resp= Spotify.search(term)
+			let resp= await Spotify.search(term)
+			console.log('HandelSearch in APP ... resp :', resp)
 			if(resp){
-				console.log('APP SEARCH response: ');
+				console.log('APP SEARCH response: ', resp);
+				return this.setState({ searchResults: resp })
 			}
 
 		}
@@ -118,17 +112,17 @@ class App extends Component {
 	      	<div>
 			  	<h1>Ja<span className="highlight">mmm</span>ing</h1>
 			  	<div className="App">
-			    	{/*<!-- Add a SearchBar component -->*/}
+			    	
 			    	<SearchBar
-			    		onSearch={this.search}
+			    		onSearch={this.handleSearch}
 			    	/>
 			    	<div className="App-playlist">
-			      		{/*<!-- Add a SearchResults component -->*/}
+			      		
 			      		<SearchResults 
 			      			searchResults={this.state.searchResults} 
 			      			onAdd={this.addTrack}
 			      		/>
-			      		{/*<!-- Add a Playlist component -->*/}
+			      		
 			      		<Playlist 
 			      			playlistName={this.state.playlistName} 
 			      			playlistTracks={this.state.playlistTracks}
