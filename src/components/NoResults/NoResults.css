@@ -1,20 +1,18 @@
-.SearchResults {
-  width: 50%;
-  height: 950px;
-  overflow-y: scroll;
-  padding: .88rem;
-  background-color: rgba(1, 12, 63, 0.7);
-  box-shadow: 0 4px 2px 2px #000000;
+.backdrop{
+  position: 'fixed';
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  backgroundColor: rgba(0,0,0,0.3);
+  padding: 50;
 }
 
-::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-}
-
-@media only screen and (max-width: 1020px) {
-  .SearchResults {
-    width: 90%;
-    margin-bottom: 2rem;
-  }
+.modal  {
+  backgroundColor: '#fff';
+  borderRadius: 5;
+  maxWidth: 500;
+  minHeight: 300;
+  margin: 0 auto;
+  padding: 30;
 }

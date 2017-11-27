@@ -12,7 +12,8 @@ class App extends Component {
 	    this.state = { 
 	    	searchResults: [] ,
 	    	playlistName:'',
-	    	playlistTracks:[]
+	    	playlistTracks:[],
+	    	isOpen: false
 	    };
 	    this.addTrack=this.addTrack.bind(this)
 	    this.removeTrack=this.removeTrack.bind(this)
@@ -51,6 +52,13 @@ class App extends Component {
 		console.log('updatePlayListName :', name);
 		this.setState({playlistName: name});
 	}
+
+
+	toggleModal = () => {
+	    this.setState({
+	    	isOpen: !this.state.isOpen
+	    });
+	}
 	
 	async savePlaylist(){
 		console.log(' APP entering savePlaylist m:')
@@ -64,7 +72,8 @@ class App extends Component {
 				this.state.playlistTracks.map((trk) => {trackURIs.push(trk.uri); return ''})
 				console.log('trackURIs',trackURIs);
 			} else{
-				console.log('There is NO tracks in  playlistTracks')
+				console.log('There is NO tracks in playlistTracks')
+				this.toggleModal
 				return
 			}			
 
@@ -73,7 +82,7 @@ class App extends Component {
 				console.log('playlistName',name);
 			} else {
 				console.log('There is NO name')
-				alert('Give a name to Play List, before SAVE.')
+				this.toggleModal
 				return
 			}			
 
@@ -137,6 +146,13 @@ class App extends Component {
 			      			onSave={this.savePlaylist}
 			      		/>
 			    	</div>
+			    <NoResults 
+			    	show={this.state.isOpen}
+		          	onClose={this.toggleModal}
+		        >
+		        	Here's some content for the modal
+		        </NoResults>
+
 			  	</div>
 			</div>
     );
