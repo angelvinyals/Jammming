@@ -1,6 +1,6 @@
-.SearchResults {
+.NoResults {
   width: 50%;
-  height: 950px;
+  height: 100px;
   overflow-y: scroll;
   padding: .88rem;
   background-color: rgba(1, 12, 63, 0.7);
@@ -13,7 +13,7 @@
 }
 
 @media only screen and (max-width: 1020px) {
-  .SearchResults {
+  .NoResults {
     width: 90%;
     margin-bottom: 2rem;
   }
