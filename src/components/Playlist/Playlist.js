@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './Playlist.css';
 import TrackList from '../TrackList/TrackList'
+import ModalError from '../ModalError/ModalError'
 
 class Playlist extends Component {
 

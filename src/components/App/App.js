@@ -55,27 +55,42 @@ class App extends Component {
 	async savePlaylist(){
 		console.log(' APP entering savePlaylist m:')
 
+
 		try{
 			let trackURIs=[];
-			this.state.playlistTracks.map((trk) => {trackURIs.push(trk.uri); return ''})
-			console.log('trackURIs',trackURIs);
-			let name=this.state.playlistName
-			console.log('playlistName',name);
+			let name=''
+
+			if(this.state.playlistTracks.length>0){
+				this.state.playlistTracks.map((trk) => {trackURIs.push(trk.uri); return ''})
+				console.log('trackURIs',trackURIs);
+			} else{
+				console.log('There is NO tracks in  playlistTracks')
+				return
+			}			
+
+			if(this.state.playlistName){
+				name=this.state.playlistName
+				console.log('playlistName',name);
+			} else {
+				console.log('There is NO name')
+				alert('Give a name to Play List, before SAVE.')
+				return
+			}			
+
 			let resp= await Spotify.savePlaylist(name, trackURIs)
 			console.log('HandelSearch in APP ... resp :', resp)
-			if(resp){
-				console.log('APP SEARCH response: ', resp);
-				return this.setState({ searchResults: resp })
+			if(resp.ok){				
+				console.log(`APP SEARCH response: ${resp.ok}`);
+				console.log('Playlist saved')
+				return 
+			} else {
+				console.log('there is a problemm with saving playing list to Spotify', resp.status)
+				return
 			}
-
 		}
 		catch(error){
 			console.log(error);
-		}
-		
-		
-
-		return ''
+		}		
 	}
 		
 	async handleSearch(term){
