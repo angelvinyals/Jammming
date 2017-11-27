@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import './NoResults.css';
 
-class NoResults extends Component {		
+
+class NoResults extends Component {
+	
+		
   	render() {
     	return (
-      		<div className="NoResults">
+      		<div className="SearchResults">
 		  		<h2> NO Results</h2>		  				  		
 			</div>
     	);
