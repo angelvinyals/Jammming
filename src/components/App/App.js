@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import SearchBar from '../SearchBar/SearchBar'
 import SearchResults from '../SearchResults/SearchResults'
+import NoResults from '../NoResults/NoResults'
 import Playlist from '../Playlist/Playlist'
 import {Spotify} from '../../util/Spotify';
 
@@ -9,24 +10,9 @@ class App extends Component {
 	constructor(props) {
 	    super(props);
 	    this.state = { 
-	    	searchResults: [
-	    		{	
-	    			id:'1',
-	    			name:'nom1',
-	    			artist:'artista',
-	    			album:'album'
-	    		}  		
-	    	] ,
+	    	searchResults: [] ,
 	    	playlistName:'',
-	    	playlistTracks:[
-	    		{
-	    			id:'2',
-	    			name:'nom2',
-	    			artist:'2artista',
-	    			album:'2album'
-
-	    		}
-	    	]
+	    	playlistTracks:[]
 	    };
 	    this.addTrack=this.addTrack.bind(this)
 	    this.removeTrack=this.removeTrack.bind(this)
@@ -66,9 +52,29 @@ class App extends Component {
 		this.setState({playlistName: name});
 	}
 	
-	savePlaylist(){
-		let trackURIs=[];
-		this.playlistTracks.map((trk) => {trackURIs.push(trk.uri); return ''})
+	async savePlaylist(){
+		console.log(' APP entering savePlaylist m:')
+
+		try{
+			let trackURIs=[];
+			this.state.playlistTracks.map((trk) => {trackURIs.push(trk.uri); return ''})
+			console.log('trackURIs',trackURIs);
+			let name=this.state.playlistName
+			console.log('playlistName',name);
+			let resp= await Spotify.savePlaylist(name, trackURIs)
+			console.log('HandelSearch in APP ... resp :', resp)
+			if(resp){
+				console.log('APP SEARCH response: ', resp);
+				return this.setState({ searchResults: resp })
+			}
+
+		}
+		catch(error){
+			console.log(error);
+		}
+		
+		
+
 		return ''
 	}
 		
@@ -86,28 +92,16 @@ class App extends Component {
 		}
 		catch(error){
 			console.log(error);
-		}
-		
-
-/*
-		.then( searchResults =>{
-			console.log('SEARCH----abans de setState');
-			console.log('searchResults: ',searchResults);
-        	this.setState({
-          		searchResults: searchResults
-        	})
-    	})
-
- */   	
+		}		
 	}	
-	
-    	
-  	
-	
-
-	
-
+	  	
   	render() {
+  		let srchResults;
+  		if(this.state.searchResults.length>0){
+  			srchResults = <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack}/>
+  		} else {
+  			srchResults = <NoResults >NO RESULTS</NoResults>
+  		}
     	return (
 	      	<div>
 			  	<h1>Ja<span className="highlight">mmm</span>ing</h1>
@@ -117,11 +111,8 @@ class App extends Component {
 			    		onSearch={this.handleSearch}
 			    	/>
 			    	<div className="App-playlist">
+			      		{srchResults}
 			      		
-			      		<SearchResults 
-			      			searchResults={this.state.searchResults} 
-			      			onAdd={this.addTrack}
-			      		/>
 			      		
 			      		<Playlist 
 			      			playlistName={this.state.playlistName} 

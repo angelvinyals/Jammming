@@ -10,6 +10,7 @@ class Playlist extends Component {
 
 	    // This binding is necessary to make `this` work in the callback
 	    this.handleNameChange = this.handleNameChange.bind(this);
+	    this.handleClick = this.handleClick.bind(this);
 	  }
 
 	handleNameChange(event){
@@ -18,6 +19,12 @@ class Playlist extends Component {
 		console.log('handleNameChange', newName)
 		this.props.onNameChange(newName)
 		 
+	}
+
+	handleClick(event){
+		event.preventDefault();		
+		console.log('handleClick')
+		this.props.onSave()
 	}
 
   	render() {
@@ -35,7 +42,7 @@ class Playlist extends Component {
 				/>
 				<a 
 					className="Playlist-save"
-					onClick={this.props.onSave}
+					onClick={this.handleClick}
 				>
 				SAVE TO SPOTIFY</a>
 			</div>
