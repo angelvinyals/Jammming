@@ -87,7 +87,7 @@ class App extends Component {
 				console.log('playlistName',name);
 			} else {
 				console.log('There is NO name')
-				this.setState({message: 'Give a NAME to PLAY list'})
+				this.setState({message: 'Give a NAME to PLAY list, please.'})
 				this.toggleModal()
 				return
 			}			
@@ -114,15 +114,21 @@ class App extends Component {
 		console.log('APP search begin..................term:,',term)
 		if(term.length<=0){
 			console.log('Thre is NO term to  search:')
-			this.setState({message: 'Please enter a song TO SEARCH before Click'})
+			this.setState({message: 'Please enter a song or artist TO SEARCH before Click'})
 			return this.toggleModal()
 		}
 		try{
 			let resp= await Spotify.search(term)
 			console.log('HandelSearch in APP ... resp :', resp)
-			if(resp){
+			if(resp && resp.length>0){
 				console.log('APP SEARCH response: ', resp);
 				return this.setState({ searchResults: resp })
+			} else if (resp){
+				console.log('APP SEARCH response is empty: ', resp);
+				this.setState({message: `There is NO TRACKS for: ${term}`})
+				this.toggleModal()
+				return
+				//return this.setState({ searchResults: resp })
 			}
 
 		}
