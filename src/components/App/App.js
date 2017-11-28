@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import './App.css';
 import SearchBar from '../SearchBar/SearchBar'
 import SearchResults from '../SearchResults/SearchResults'
-import NoResults from '../NoResults/NoResults'
+import SearchNoResults from '../SearchNoResults/SearchNoResults'
+import ModalError from '../ModalError/ModalError'
 import Playlist from '../Playlist/Playlist'
 import {Spotify} from '../../util/Spotify';
 
@@ -13,7 +14,8 @@ class App extends Component {
 	    	searchResults: [] ,
 	    	playlistName:'',
 	    	playlistTracks:[],
-	    	isOpen: false
+	    	isOpen: false,
+	    	message:'',
 	    };
 	    this.addTrack=this.addTrack.bind(this)
 	    this.removeTrack=this.removeTrack.bind(this)
@@ -55,6 +57,7 @@ class App extends Component {
 
 
 	toggleModal = () => {
+		console.log('entering toggleModal')
 	    this.setState({
 	    	isOpen: !this.state.isOpen
 	    });
@@ -62,8 +65,6 @@ class App extends Component {
 	
 	async savePlaylist(){
 		console.log(' APP entering savePlaylist m:')
-
-
 		try{
 			let trackURIs=[];
 			let name=''
@@ -72,8 +73,12 @@ class App extends Component {
 				this.state.playlistTracks.map((trk) => {trackURIs.push(trk.uri); return ''})
 				console.log('trackURIs',trackURIs);
 			} else{
-				console.log('There is NO tracks in playlistTracks')
-				this.toggleModal
+				console.log('There is NO tracks in playlistTracks. ')
+				this.setState({
+					message: 
+					`There is No tracks on PLAY list. 
+					Please add some Tracks before SAVING`})
+				this.toggleModal()
 				return
 			}			
 
@@ -82,7 +87,8 @@ class App extends Component {
 				console.log('playlistName',name);
 			} else {
 				console.log('There is NO name')
-				this.toggleModal
+				this.setState({message: 'Give a NAME to PLAY list'})
+				this.toggleModal()
 				return
 			}			
 
@@ -91,6 +97,8 @@ class App extends Component {
 			if(resp.ok){				
 				console.log(`APP SEARCH response: ${resp.ok}`);
 				console.log('Playlist saved')
+				this.setState({message: 'PLAY list saved'})
+				this.toggleModal()
 				return 
 			} else {
 				console.log('there is a problemm with saving playing list to Spotify', resp.status)
@@ -104,7 +112,11 @@ class App extends Component {
 		
 	async handleSearch(term){
 		console.log('APP search begin..................term:,',term)
-
+		if(term.length<=0){
+			console.log('Thre is NO term to  search:')
+			this.setState({message: 'Please enter a song TO SEARCH before Click'})
+				this.toggleModal()
+		}
 		try{
 			let resp= await Spotify.search(term)
 			console.log('HandelSearch in APP ... resp :', resp)
@@ -124,7 +136,7 @@ class App extends Component {
   		if(this.state.searchResults.length>0){
   			srchResults = <SearchResults searchResults={this.state.searchResults} onAdd={this.addTrack}/>
   		} else {
-  			srchResults = <NoResults >NO RESULTS</NoResults>
+  			srchResults = <SearchNoResults >NO RESULTS</SearchNoResults>
   		}
     	return (
 	      	<div>
@@ -135,9 +147,7 @@ class App extends Component {
 			    		onSearch={this.handleSearch}
 			    	/>
 			    	<div className="App-playlist">
-			      		{srchResults}
-			      		
-			      		
+			    		{srchResults}		
 			      		<Playlist 
 			      			playlistName={this.state.playlistName} 
 			      			playlistTracks={this.state.playlistTracks}
@@ -146,12 +156,13 @@ class App extends Component {
 			      			onSave={this.savePlaylist}
 			      		/>
 			    	</div>
-			    <NoResults 
+			    <ModalError
 			    	show={this.state.isOpen}
 		          	onClose={this.toggleModal}
+		          	
 		        >
-		        	Here's some content for the modal
-		        </NoResults>
+		        	<p>{this.state.message}</p>
+		        </ModalError>
 
 			  	</div>
 			</div>
