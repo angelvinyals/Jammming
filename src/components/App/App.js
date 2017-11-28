@@ -101,7 +101,7 @@ class App extends Component {
 				this.toggleModal()
 				return 
 			} else {
-				console.log('there is a problemm with saving playing list to Spotify', resp.status)
+				console.log('there is a problemm trying to save playing list to Spotify', resp.status)
 				return
 			}
 		}
@@ -115,7 +115,7 @@ class App extends Component {
 		if(term.length<=0){
 			console.log('Thre is NO term to  search:')
 			this.setState({message: 'Please enter a song TO SEARCH before Click'})
-				this.toggleModal()
+			return this.toggleModal()
 		}
 		try{
 			let resp= await Spotify.search(term)
