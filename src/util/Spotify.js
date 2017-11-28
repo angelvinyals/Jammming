@@ -25,11 +25,12 @@ export const Spotify={
 		
 	getAccessToken(){
 		console.log(`Entering SPOTIFY.JS getAccessToken `)
-		if (accessToken){
-			console.log(`YES, there is accesToken : ${accessToken}`);
-			return accessToken;
-		}
-
+		
+		//if (accessToken){
+		//	console.log(`YES, there is accesToken : ${accessToken}`);
+		//	return accessToken;
+		//}
+		
 		console.log('there is NOT accesToken');
 		const accessTokenMatch = window.location.href.match(/access_token=([^&]*)/);
     	console.log('accessTokenMatch',accessTokenMatch);
@@ -61,27 +62,36 @@ export const Spotify={
 	    }
 	    
 	},
-	
+
+	handleErrors(response) {
+	    if (!response.ok) {
+	    	console.log('SPOTIFY.handleErrors()- response : ',response);
+	        throw Error(response.statusText);
+	    }
+	    return response;
+	},
+
 
 	search(term){
-		console.log('Entering SPOTIFY.JS search')
-		Spotify.getAccessToken()
+		console.log('Entering SPOTIFY.JS search')		
+		Spotify.getAccessToken()		
 		console.log('continuiing in Search with accessToken...: ');
 		//console.log('expires_in', expires_in);
-		console.log('Searching term.....', term);
+		console.log('SPOTIFY.Search() ...term.....', term);
 		return fetch('https://api.spotify.com/v1/search?&q=' + term + '&type=track&limit=10',{
 			method: 'GET',
 			headers: {Authorization: `Bearer ${accessToken}`}
-		}).then(response => {								
-			console.log('resposta de la  busqueda: ',response);
+		}).then(response => {
+			console.log('SPOTIFY.Search()- response : ',response);
+			Spotify.handleErrors(response)
 			return response.json();
 		}).then(jsonResponse =>{
-			console.log('searchin jsonResponse: ',jsonResponse);
+			console.log('SPOTIFY.Search()- jsonResponse: ',jsonResponse);
 			if (!jsonResponse.tracks){
-				console.log('no hi ha tracks.....');
+				console.log('SPOTIFY.Search()-There is NO tracks.....');
 				return [];		
 			} else{
-				console.log('jsonresponse.tracks.items', jsonResponse.tracks.items);
+				console.log('SPOTIFY.Search()- jsonresponse.tracks.items', jsonResponse.tracks.items);
 				return jsonResponse.tracks.items.map( item=>(  
 						{
 							id: item.id,
@@ -96,8 +106,10 @@ export const Spotify={
 		});	
 	},
 
+
+
 	savePlaylist(name, trackUris) {
-		console.log('Entering savePlaylist on SPOTIFY.js')
+		console.log('SPOTIFY.savePlaylist() -Entering ')
 	    if (!name || !trackUris.length) {
 	      return;
 	    }
