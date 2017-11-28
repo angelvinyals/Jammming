@@ -10,9 +10,6 @@ class Track extends Component {
 	  }
 
 	renderAction(){
-		{/*displays a - anchor tag if the isRemoval property is true, 
-		and a + anchor tag if the isRemoval property is false. 
-		Set the class name to Track-action.*/}
 		if(this.props.isRemoval){
 			return <span onClick={this.removeTrack}>-</span>
 		}
